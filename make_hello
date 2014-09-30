@@ -1,0 +1,12 @@
+# Variables ___________________________________________________________________
+
+CFLAGS=-c
+IFLAGS=-I eigen
+
+all: hello
+
+hello: hello.o
+	g++ hello.o -o hello
+
+hello.o: hello.cpp
+	g++ $(CFLAGS) $(IFLAGS) hello.cpp
