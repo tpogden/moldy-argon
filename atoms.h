@@ -20,11 +20,11 @@ class Atoms {
 
     // Constructors & Destructors _____________________________________________
 
-    Atoms(RowVectorXf &mass_i);
+    Atoms(RowVectorXf &mass_i, ArrayXXf &pos_i, ArrayXXf &vel_i);
 
     // Inits
 
-    int init(RowVectorXf &mass_i);
+    int init(RowVectorXf &mass_i, ArrayXXf &pos_i, ArrayXXf &vel_i);
 
     // Sets
 
@@ -33,6 +33,7 @@ class Atoms {
 
     int set_pos(ArrayXXf &pos_i);
     int set_pos(VectorXf &pos_i, int idx_i);
+    int set_pos_random(int num_dims_i, int num_atoms_i, float cell_length_i);
 
     int set_vel(ArrayXXf &vel_i);
     int set_vel(VectorXf &vel_i, int idx_i);

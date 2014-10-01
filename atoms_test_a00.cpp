@@ -10,31 +10,37 @@ using namespace Eigen;
 
 int main() {
 
-    // const int num_dims = 3;
+    const int num_dims = 3;
 
     int num_atoms = 4;
 
+    float cell_length = 5.0;
+
     RowVectorXf mass_1(num_atoms); mass_1 << 1.0, 2.0, 1.0, 2.0;
 
-    // Test init, get_mass
+    ArrayXXf pos_1 = ArrayXXf::Zero(num_dims, num_atoms);
 
-    Atoms atoms_1(mass_1);
+    ArrayXXf vel_1 = ArrayXXf::Zero(num_dims, num_atoms);
 
-    cout << atoms_1.get_mass() << endl;    
+    Atoms atoms_1(mass_1, pos_1, vel_1);
 
-    // Test set_mass
-
-    RowVectorXf mass_2(num_atoms); mass_2 << 2.0, 4.0, 2.0, 4.0;
-
-    cout << atoms_1.get_mass() << endl;    
-
-    // Test set_mass, get_mass individual
-
-    atoms_1.set_mass(5.0, 2);    
-
-    cout << atoms_1.get_mass(2) << endl;
+    cout << "Mass:" << endl;
 
     cout << atoms_1.get_mass() << endl;
+
+    cout << "Pos:" << endl;
+
+    cout << atoms_1.get_pos() << endl;
+
+    cout << "Vel:" << endl;
+
+    cout << atoms_1.get_vel() << endl;
+
+    atoms_1.set_pos_random(num_dims, num_atoms, cell_length);
+
+    cout << "Pos:" << endl;
+
+    cout << atoms_1.get_pos() << endl;
 
     return 0;
 

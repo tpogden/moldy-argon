@@ -4,15 +4,23 @@
 
 // Constructors & Destructors -------------------------------------------------
 
-Atoms::Atoms(RowVectorXf &mass_i) {
+Atoms::Atoms(RowVectorXf &mass_i, ArrayXXf &pos_i, ArrayXXf &vel_i) {
 
-    init(mass_i);
+    init(mass_i, pos_i, vel_i);
 
 }
 
 // Inits
 
-int Atoms::init(RowVectorXf &mass_i) { set_mass(mass_i); return 0; }
+int Atoms::init(RowVectorXf &mass_i, ArrayXXf &pos_i, ArrayXXf &vel_i) { 
+
+    set_mass(mass_i); 
+    set_pos(pos_i);
+    set_vel(vel_i);
+
+    return 0; 
+
+}
 
 // Sets
 
@@ -32,6 +40,16 @@ int Atoms::set_pos(VectorXf &pos_i, int idx_i) {
 
 }
 
+int Atoms::set_pos_random(int num_dims_i, int num_atoms_i, float cell_length_i) {
+
+    ArrayXXf rand_pos(num_dims_i, num_atoms_i);
+    rand_pos.setRandom(); rand_pos = rand_pos*cell_length_i/2.0;    
+
+    set_pos(rand_pos);
+
+    return 0;
+
+}
 
 int Atoms::set_vel(ArrayXXf &vel_i) { vel = vel_i; return 0; }
 
