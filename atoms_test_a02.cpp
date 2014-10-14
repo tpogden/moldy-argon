@@ -8,7 +8,7 @@ using namespace std;
 
 int main() {
   // We'll use a 3D model.
-  const int kNumDims = 3;
+  const int kNumDims = 2;
   // Initialise a set of atoms.
   int num_atoms = 10;
   Atoms atoms_1(kNumDims, num_atoms);

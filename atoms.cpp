@@ -115,7 +115,7 @@ string Atoms::get_json_mass() const {
   stringstream mass_ss;
   mass_ss.precision(4);
 
-  mass_ss << "mass: " << "[";
+  mass_ss << "\"mass\": " << "[";
 
   for (int n = 0; n < get_num_atoms()-1; n++) {
     mass_ss << get_mass(n) << ", ";
@@ -134,7 +134,7 @@ string Atoms::get_json_pos() const {
   stringstream pos_ss;
   pos_ss.precision(4);
 
-  pos_ss << "pos: " << "[" << endl;
+  pos_ss << "\"pos\": " << "[" << endl;
 
   for (int n = 0; n < get_num_atoms()-1; n++) {
     pos_ss << "[";
@@ -163,7 +163,7 @@ string Atoms::get_json_vel() const {
   stringstream vel_ss;
   vel_ss.precision(4);
 
-  vel_ss << "vel: " << "[" << endl;
+  vel_ss << "\"vel\": " << "[" << endl;
 
   for (int n = 0; n < get_num_atoms()-1; n++) {
     vel_ss << "[";
