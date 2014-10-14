@@ -7,6 +7,7 @@
 #define ATOMS_H
 
 #include <Eigen/Core>
+#include <fstream>
 
 using namespace std;
 using namespace Eigen;
@@ -50,7 +51,7 @@ class Atoms {
 
   int set_pos(ArrayXXf &pos_i);
   int set_pos(VectorXf &pos_i, int idx_i);
-  int set_pos_random(float cell_length_i);
+  int set_pos_random(float box_length_i);
 
   int set_vel(ArrayXXf &vel_i);
   int set_vel(VectorXf &vel_i, int idx_i);
@@ -70,6 +71,16 @@ class Atoms {
   VectorXf get_vel(int idx_i) const;
 
   string get_info() const;
+
+  string get_json_mass() const;
+  string get_json_pos() const;
+  string get_json_vel() const;
+  string get_json() const;
+
+  // File Writes ______________________________________________________________
+
+  int write_json_file(ofstream & json_o_file_i);
+  int write_json_file(string & json_filename_i);
 
 };
 

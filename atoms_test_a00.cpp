@@ -37,13 +37,7 @@ int main() {
   cout << "Vel:" << endl;
 
   cout << atoms_1.get_vel() << endl;
-
-  // atoms_1.set_pos_random(cell_length);
-
-  // cout << "Pos:" << endl;
-
-  // cout << atoms_1.get_pos() << endl;
-
+  
   return 0;
 
 }

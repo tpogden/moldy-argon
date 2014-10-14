@@ -68,9 +68,9 @@ int Atoms::set_pos(VectorXf &pos_i, int idx_i) {
   pos_.col(idx_i) = pos_i; return 0;
 }
 
-int Atoms::set_pos_random(float cell_length_i) {
+int Atoms::set_pos_random(float box_length_i) {
   ArrayXXf rand_pos(get_num_dims(), get_num_atoms());
-  rand_pos.setRandom(); rand_pos = rand_pos*cell_length_i/2.0;    
+  rand_pos.setRandom(); rand_pos = rand_pos*box_length_i/2.0;    
   set_pos(rand_pos);
   return 0;
 }
@@ -109,3 +109,131 @@ string Atoms::get_info() const {
   return info_ss.str();
 
 }
+
+string Atoms::get_json_mass() const {
+
+  stringstream mass_ss;
+  mass_ss.precision(4);
+
+  mass_ss << "mass: " << "[";
+
+  for (int n = 0; n < get_num_atoms()-1; n++) {
+    mass_ss << get_mass(n) << ", ";
+  }
+  // Last atom
+  mass_ss << get_mass(get_num_atoms()-1);
+
+  mass_ss << "]";
+
+  return mass_ss.str();
+
+}
+
+string Atoms::get_json_pos() const {
+
+  stringstream pos_ss;
+  pos_ss.precision(4);
+
+  pos_ss << "pos: " << "[" << endl;
+
+  for (int n = 0; n < get_num_atoms()-1; n++) {
+    pos_ss << "[";
+    for (int i = 0; i < get_num_dims()-1; i++) {
+
+      pos_ss << get_pos(n)[i] << ", ";
+
+    } 
+    pos_ss << get_pos(n).tail(1) << "]," << endl;
+  }
+  // Last atom
+  pos_ss << "[";
+  for (int i = 0; i < get_num_dims()-1; i++) {
+    pos_ss << get_pos(get_num_atoms()-1)[i] << ", ";
+  } 
+  pos_ss << get_pos(get_num_atoms()-1).tail(1) << "]";
+
+  pos_ss << "]";
+
+  return pos_ss.str();
+
+}
+
+string Atoms::get_json_vel() const {
+
+  stringstream vel_ss;
+  vel_ss.precision(4);
+
+  vel_ss << "vel: " << "[" << endl;
+
+  for (int n = 0; n < get_num_atoms()-1; n++) {
+    vel_ss << "[";
+    for (int i = 0; i < get_num_dims()-1; i++) {
+
+      vel_ss << get_vel(n)[i] << ", ";
+
+    } 
+    vel_ss << get_vel(n).tail(1) << "]," << endl;
+  }
+  // Last atom
+  vel_ss << "[";
+  for (int i = 0; i < get_num_dims()-1; i++) {
+    vel_ss << get_vel(get_num_atoms()-1)[i] << ", ";
+  } 
+  vel_ss << get_vel(get_num_atoms()-1).tail(1) << "]";
+
+  vel_ss << "]";
+
+  return vel_ss.str();
+
+}
+
+string Atoms::get_json() const {
+
+  stringstream json_ss;
+  json_ss.precision(4);
+
+  json_ss << "{" << endl;
+
+  json_ss << get_json_mass();
+
+  json_ss << "," << endl;
+
+  json_ss << get_json_pos();
+
+  json_ss << "," << endl;
+
+  json_ss << get_json_vel();
+
+  json_ss << endl << "}";
+
+  return json_ss.str();
+
+}
+
+int Atoms::write_json_file(ofstream & json_o_file_i) {
+
+  if (json_o_file_i.is_open()) {
+      json_o_file_i << get_json();
+      return 0;
+  }
+
+  else {
+    cout << "Filestream closed. Unable to write file." << endl; 
+    return 1;
+  }
+
+}
+
+int Atoms::write_json_file(string & json_filename_i) {
+
+    ofstream json_o_file;
+    json_o_file.open(json_filename_i.c_str());
+   
+    write_json_file(json_o_file);
+
+    json_o_file.close();
+
+    return 0;
+
+}
+
