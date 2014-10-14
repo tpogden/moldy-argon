@@ -5,9 +5,12 @@ IFLAGS=-I eigen
 
 # Atoms _______________________________________________________________________
 
-all: atoms_test_a00
+all: atoms_test_a01
 
 # Binaries
+
+atoms_test_a01: atoms_test_a01.o atoms.o
+	g++ $(IFLAGS) atoms_test_a01.o atoms.o -o atoms_test_a01	
 
 atoms_test_a00: atoms_test_a00.o atoms.o
 	g++ $(IFLAGS) atoms_test_a00.o atoms.o -o atoms_test_a00	
