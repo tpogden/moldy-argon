@@ -3,9 +3,27 @@
 CFLAGS=-c
 IFLAGS=-I eigen
 
-# Atoms _______________________________________________________________________
+# All _________________________________________________________________________
 
-all: atoms_test_a04
+# all: clean
+all: sim_test_a00
+
+# Sim _________________________________________________________________________
+
+# Binaries
+
+sim_test_a00: sim_test_a00.o sim.o atoms.o
+	g++ $(IFLAGS) sim_test_a00.o sim.o atoms.o -o sim_test_a00
+
+# Outputs
+
+sim_test_a00.o:
+	g++ $(CFLAGS) $(IFLAGS) sim_test_a00.cpp
+
+sim.o: sim.cpp
+	g++ $(CFLAGS) $(IFLAGS) sim.cpp
+
+# Atoms _______________________________________________________________________
 
 # Binaries
 

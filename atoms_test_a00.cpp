@@ -5,10 +5,10 @@
 #include <iostream>
 #include <Eigen/Core>
 
+#include "atoms.h"
+
 using namespace std;
 using namespace Eigen;
-
-#include "atoms.h"
 
 int main() {
 
