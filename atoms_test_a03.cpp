@@ -1,5 +1,5 @@
 // atoms_test_a02.cpp: Tommy Ogden <t@ogden.eu> 
-// Description: 
+// Description: Testing move and accl functions
 
 #include <iostream>
 using namespace std;
@@ -17,12 +17,26 @@ int main() {
   srand(time(NULL));
   float box_length = 10.0;
   atoms_1.set_pos_random(box_length);
-  // Print the atom masses, positions and velocities.
-  cout << atoms_1.get_json() << endl;
 
-  string json_fname = "atoms_test_a02.json";
-    
-  atoms_1.write_json_file(json_fname);
+  cout << atoms_1.get_info() << endl;
+
+  ArrayXXf move_1 = ArrayXXf::Ones(kNumDims, num_atoms);
+  atoms_1.move(move_1);
+
+  cout << atoms_1.get_info() << endl;
+
+  VectorXf move_atom_3(kNumDims); move_atom_3 << 2.0, 2.0;
+  atoms_1.move(move_atom_3, 3);
+
+  cout << atoms_1.get_info() << endl;
+
+  atoms_1.accl(move_1);
+
+  cout << atoms_1.get_info() << endl;
+
+  atoms_1.accl(move_atom_3, 3);  
+
+  cout << atoms_1.get_info() << endl;
 
   return 0;
 }

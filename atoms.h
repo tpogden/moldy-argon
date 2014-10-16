@@ -52,9 +52,15 @@ class Atoms {
   int set_pos(ArrayXXf &pos_i);
   int set_pos(VectorXf &pos_i, int idx_i);
   int set_pos_random(float box_length_i);
+  int move(ArrayXXf &move_i);
+  int move(VectorXf &move_i, int idx_i);
 
   int set_vel(ArrayXXf &vel_i);
   int set_vel(VectorXf &vel_i, int idx_i);
+  int accl(ArrayXXf &accl_i);
+  int accl(VectorXf &accl_i, int idx_i);
+
+  int step_with_vel_verlet(float t_step_i);
 
   // Gets _____________________________________________________________________
 

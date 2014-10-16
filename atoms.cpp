@@ -75,10 +75,47 @@ int Atoms::set_pos_random(float box_length_i) {
   return 0;
 }
 
+int Atoms::move(ArrayXXf &move_i) { pos_ += move_i; return 0; }
+
+int Atoms::move(VectorXf &move_i, int idx_i) {
+  VectorXf pos = pos_.col(idx_i);
+  pos_.col(idx_i) = pos + move_i; 
+  return 0;
+}
+
 int Atoms::set_vel(ArrayXXf &vel_i) { vel_ = vel_i; return 0; }
 
 int Atoms::set_vel(VectorXf &vel_i, int idx_i) { 
   vel_.col(idx_i) = vel_i; return 0;
+}
+
+int Atoms::accl(ArrayXXf &accl_i) { vel_ += accl_i; return 0; }
+
+int Atoms::accl(VectorXf &accl_i, int idx_i) {
+  VectorXf vel = vel_.col(idx_i);
+  vel_.col(idx_i) = vel + accl_i;
+  return 0;
+}
+
+int Atoms::step_with_vel_verlet(float t_step_i) {
+
+  // Calculate Force Before, No force for now
+  // ArrayXXf force_before = ArrayXXf::Zero(num_dims_, num_atoms_);
+
+  // Update Positions
+  ArrayXXf step_move(num_dims_, num_atoms_);
+  step_move = vel_*t_step_i; //+ force_before*t_step_i*t_step_i/2;
+  move(step_move);
+
+  // Calculate Force After, No force for now
+  // ArrayXXf force_after = ArrayXXf::Zero(num_dims_, num_atoms_);
+
+  // Update Velocities
+  // ArrayXXf accl(num_dims_, num_atoms_);
+  // step_accl = force_before + force_after*t_step_i/2;
+  // accl(step_accl);
+
+  return 0;
 }
 
 // Gets _______________________________________________________________________
