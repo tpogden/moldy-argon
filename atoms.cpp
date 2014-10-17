@@ -89,6 +89,13 @@ int Atoms::set_vel(VectorXf &vel_i, int idx_i) {
   vel_.col(idx_i) = vel_i; return 0;
 }
 
+int Atoms::set_vel_random(float max_speed_i) {
+  ArrayXXf rand_vel(get_num_dims(), get_num_atoms());
+  rand_vel.setRandom(); rand_vel = rand_vel*max_speed_i;    
+  set_vel(rand_vel);
+  return 0;
+}
+
 int Atoms::accl(ArrayXXf &accl_i) { vel_ += accl_i; return 0; }
 
 int Atoms::accl(VectorXf &accl_i, int idx_i) {

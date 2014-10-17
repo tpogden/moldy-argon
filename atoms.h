@@ -57,6 +57,7 @@ class Atoms {
 
   int set_vel(ArrayXXf &vel_i);
   int set_vel(VectorXf &vel_i, int idx_i);
+  int set_vel_random(float max_speed);
   int accl(ArrayXXf &accl_i);
   int accl(VectorXf &accl_i, int idx_i);
 

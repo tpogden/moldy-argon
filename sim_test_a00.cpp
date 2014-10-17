@@ -16,6 +16,8 @@ int main() {
     float t = 0.0;
     float box_length = 10.0; 
 
+    float max_speed = 1.0;
+
     int num_atoms = 5;
 
     Sim sim(box_length, kNumDims, num_atoms);    
@@ -24,6 +26,8 @@ int main() {
     // used? PBCs?
 
     sim.get_atoms()->set_pos_random(box_length);
+
+    sim.get_atoms()->set_vel_random(max_speed);
 
     cout << sim.get_box_length() << endl;
     cout << sim.get_atoms()->get_num_atoms() << endl;
