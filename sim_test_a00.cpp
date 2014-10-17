@@ -18,15 +18,28 @@ int main() {
 
     int num_atoms = 5;
 
-    Sim sim(t, box_length, kNumDims, num_atoms);
+    Sim sim(box_length, kNumDims, num_atoms);    
 
-    cout << sim.get_t() << endl;
+    // TODO: Does box_length need to be in sim, or in atoms? Where else will it
+    // used? PBCs?
+
+    sim.get_atoms()->set_pos_random(box_length);
 
     cout << sim.get_box_length() << endl;
-
     cout << sim.get_atoms()->get_num_atoms() << endl;
 
-  // cout << "Hello" << endl;
+    cout << "Start:" << endl;
+    cout << sim.get_t() << endl;
+    cout << sim.get_atoms()->get_pos() << endl;
+
+    int num_t_steps = 10;
+    float t_step = 0.1;
+
+    sim.run(num_t_steps, t_step);
+
+    cout << "End:" << endl;
+    cout << sim.get_t() << endl;    
+    cout << sim.get_atoms()->get_pos() << endl;
 
   return 0;
 

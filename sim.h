@@ -30,6 +30,7 @@ class Sim {
   // Constructors & Destructors _______________________________________________
 
   Sim(float t_i, float box_length_i, int num_dims_i, int num_atoms_i);
+  Sim(float box_length_i, int num_dims_i, int num_atoms_i);
 
   // Inits ____________________________________________________________________
 
@@ -46,6 +47,10 @@ class Sim {
   float get_box_length() const;
 
   Atoms * get_atoms() const;
+
+// Run ________________________________________________________________________
+
+  int run(int num_t_steps_i, float t_step_i);
 
 };
 
