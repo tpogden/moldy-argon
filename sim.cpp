@@ -42,19 +42,65 @@ float Sim::get_box_length() const { return box_length_; }
 
 Atoms * Sim::get_atoms() const { return atoms_; }
 
+string Sim::get_json() const {
+  stringstream json_ss;
+  json_ss << "{" << endl;
+  json_ss << "\"t\": " << t_ << "," << endl;
+  json_ss << "\"atoms\": " << endl; 
+  json_ss << atoms_->get_json() << endl;
+  json_ss << "}";
+  return json_ss.str();
+}
+
+// File Writes ________________________________________________________________
+
+int Sim::write_json_file(ofstream & json_o_file_i) {
+    if (json_o_file_i.is_open()) {
+        json_o_file_i << get_json(); return 0;
+    }
+    else {
+        cout << "Filestream closed. Unable to write file." << endl; return 1;
+    }    
+}
+
+int Sim::write_json_file(string & json_filename_i) {
+    ofstream json_o_file;
+    json_o_file.open(json_filename_i.c_str());
+    write_json_file(json_o_file);
+    json_o_file.close();
+    return 0;
+}
+
 // Run ________________________________________________________________________
 
-int Sim::run(int num_t_steps_i, float t_step_i) {
+int Sim::run(int num_t_steps_i, float t_step_i, string & json_filename_i) {
+
+  // string filename = "sim.json";
 
   t_ = 0.0;
-
   // set_t(0.0);
 
+  ofstream json_file;
+  json_file.open(json_filename_i.c_str());
+
+  json_file << "[" << endl;
+
   for (int i = 0; i < num_t_steps_i; i++) {
+
+    write_json_file(json_file);
+    json_file << "," << endl;
+    
     atoms_->step_with_vel_verlet(t_step_i);
     t_ += t_step_i;
-    cout << atoms_->get_pos() << endl;
+
+    // cout << atoms_->get_pos() << endl;
   }
+
+  write_json_file(json_file);
+
+  json_file << endl << "]" << endl;
+
+  json_file.close();
 
   return 0;
 

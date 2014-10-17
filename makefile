@@ -6,16 +6,23 @@ IFLAGS=-I eigen
 # All _________________________________________________________________________
 
 # all: clean
-all: sim_test_a00
+# all: sim_test_a00
+all: sim_test_a01
 
 # Sim _________________________________________________________________________
 
 # Binaries
 
+sim_test_a01: sim_test_a01.o sim.o atoms.o
+	g++ $(IFLAGS) sim_test_a01.o sim.o atoms.o -o sim_test_a01
+
 sim_test_a00: sim_test_a00.o sim.o atoms.o
 	g++ $(IFLAGS) sim_test_a00.o sim.o atoms.o -o sim_test_a00
 
 # Outputs
+
+sim_test_a01.o:
+	g++ $(CFLAGS) $(IFLAGS) sim_test_a01.cpp
 
 sim_test_a00.o:
 	g++ $(CFLAGS) $(IFLAGS) sim_test_a00.cpp

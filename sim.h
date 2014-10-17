@@ -48,9 +48,16 @@ class Sim {
 
   Atoms * get_atoms() const;
 
+  string get_json() const;
+
+// File Writes ________________________________________________________________
+
+  int write_json_file(ofstream & json_o_file_i);
+  int write_json_file(string & json_filename_i);
+
 // Run ________________________________________________________________________
 
-  int run(int num_t_steps_i, float t_step_i);
+  int run(int num_t_steps_i, float t_step_i, string & json_filename_i);
 
 };
 
