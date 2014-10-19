@@ -22,6 +22,7 @@ int main() {
 
     Sim sim(box_length, kNumDims, num_atoms);    
 
+    srand(time(NULL));
     sim.get_atoms()->set_pos_random(box_length);
     sim.get_atoms()->set_vel_random(max_speed);
 
@@ -32,7 +33,7 @@ int main() {
     int num_t_steps = 100;
     float t_step = 0.1;
 
-    string filename = "sim.json";
+    string filename = "sim_test_a01.json";
 
     sim.run(num_t_steps, t_step, filename);
 

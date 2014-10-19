@@ -51,6 +51,8 @@ int Atoms::init(int num_dims_i, int num_atoms_i) {
 
 // Sets _______________________________________________________________________
 
+
+
 int Atoms::set_num_dims(int num_dims_i) { num_dims_ = num_dims_i; return 0; }
 
 int Atoms::set_num_atoms(int num_atoms_i) { 
@@ -232,6 +234,8 @@ string Atoms::get_json_vel() const {
 }
 
 string Atoms::get_json() const {
+
+  // TODO: add num_dims and num_atoms. 
 
   stringstream json_ss;
   json_ss.precision(4);
