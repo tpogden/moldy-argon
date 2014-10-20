@@ -8,7 +8,14 @@ IFLAGS=-I eigen
 # all: clean
 # all: sim_test_a00
 # all: sim_test_a01
-all: sim_test_a02
+# all: sim_test_a02
+all: moldy_argon
+
+moldy_argon: moldy_argon.o sim.o atoms.o
+	g++ $(IFLAGS) moldy_argon.o sim.o atoms.o -o moldy_argon
+
+moldy_argon.o:
+	g++ $(CFLAGS) $(IFLAGS) moldy_argon.cpp	
 
 # Sim _________________________________________________________________________
 

@@ -22,9 +22,6 @@ class Sim {
 
   float t_; // time
 
-  // TODO: Should box length be a member of atoms or sim? If the box length is
-  // a member of the Sim class then the set_pos_random method should **also**
-  // be in the Sim class.
   float box_length_; 
 
   Atoms * atoms_;
