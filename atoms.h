@@ -1,7 +1,5 @@
-//
-//
-//
-//
+// atoms.h: Tommy Ogden <t@ogden.eu>
+// Definition for Atoms (set of atoms) class.
 
 #ifndef ATOMS_H
 #define ATOMS_H
