@@ -117,6 +117,8 @@ class Atoms {
   // Returns the masses, positions and velocities, mostly for cout debugging.
   string get_info() const;
 
+  string get_json_num_atoms() const; // Returns the number of atoms as json.
+  string get_json_num_dims() const; // Returns the num of dimenstions as json.
   string get_json_mass() const; // Returns the array of masses as json. 
   string get_json_pos() const; // Returns the array of positions as json.
   string get_json_vel() const; // Returns the array of velocities as json.

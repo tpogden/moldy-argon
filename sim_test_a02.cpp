@@ -27,7 +27,7 @@ int main() {
   sim.get_atoms()->set_vel_random(max_speed);
 
   // Run the simulation.
-  int num_t_steps = 100;
+  int num_t_steps = 1000;
   float t_step = 0.1;
   string filename = "sim_test_a02.json";
   sim.run(num_t_steps, t_step, filename);

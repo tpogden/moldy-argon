@@ -156,6 +156,20 @@ string Atoms::get_info() const {
 
 }
 
+string Atoms::get_json_num_atoms() const {
+  stringstream num_atoms_ss;
+  num_atoms_ss << "\"num_atoms\": ";
+  num_atoms_ss << get_num_atoms();
+  return num_atoms_ss.str();   
+}
+
+string Atoms::get_json_num_dims() const {
+  stringstream num_dims_ss;
+  num_dims_ss << "\"num_dims\": ";
+  num_dims_ss << get_num_dims();
+  return num_dims_ss.str();   
+}
+
 string Atoms::get_json_mass() const {
 
   stringstream mass_ss;
@@ -234,28 +248,20 @@ string Atoms::get_json_vel() const {
 }
 
 string Atoms::get_json() const {
-
-  // TODO: add num_dims and num_atoms. 
-
   stringstream json_ss;
   json_ss.precision(4);
-
   json_ss << "{" << endl;
-
-  json_ss << get_json_mass();
-
-  json_ss << "," << endl;
-
-  json_ss << get_json_pos();
-
-  json_ss << "," << endl;
-
-  json_ss << get_json_vel();
-
-  json_ss << endl << "}";
-
+  // Append the num atoms
+  json_ss << get_json_num_atoms() << "," << endl;
+  // Append the num dimenstions
+  json_ss << get_json_num_dims() << "," << endl;
+  // Append the masses
+  json_ss << get_json_mass() << "," << endl;
+  // Append the positions
+  json_ss << get_json_pos() << "," << endl;
+  // Append the velocities
+  json_ss << get_json_vel() << endl << "}";
   return json_ss.str();
-
 }
 
 int Atoms::write_json_file(ofstream & json_o_file_i) {
