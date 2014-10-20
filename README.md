@@ -14,7 +14,7 @@ Compile the app using the makefile. You'll need the GCC installer.
 
 `$ make`
 
-Once compiled, to run the simulator 
+Once compiled, the simulator can be run with
 
 `$ moldy_argon`
 
@@ -44,6 +44,14 @@ e.g.
 $ moldy_argon --num-atoms 100 --bc-type b --filename my_file.json
 ```
 
+For 2D simulations, there's a basic visualiser for the dynamics, written in
+Python with Numpy and Matplotlib. I've you've got those installed, try
+
+```
+$ plot/plot_moldy_argon.py
+```
+
+to see some atoms moving around.
 
 ## Documentation
 
