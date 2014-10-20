@@ -20,6 +20,7 @@ int main(int argc, char* argv[]) {
   float t_step = 0.1;
   int num_t_steps = 100;
 
+  char* bc_type_ptr;
   char bc_type = 't'; // Toroidal Boundary Conditions
   string filename = "moldy_argon.json";
 
@@ -39,8 +40,9 @@ int main(int argc, char* argv[]) {
         t_step = atof(argv[i+1]);
       else if (string(argv[i]) == "--num-t-steps") // Number of time steps
         num_t_steps = atoi(argv[i+1]);
-      else if (string(argv[i]) == "--bc-type") // Boundary condition type
-        bc_type = atoi(argv[i+1]);
+      else if (string(argv[i]) == "--bc-type") {// Boundary condition type
+        bc_type_ptr = argv[i+1]; bc_type = *bc_type_ptr; 
+      }
       else if (string(argv[i]) == "--filename") // Filename
         filename = argv[i+1];
     }

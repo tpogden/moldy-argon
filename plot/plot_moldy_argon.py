@@ -18,11 +18,7 @@ def main():
 
     json_data.close()
 
-    print data[0]['atoms']['pos']
-
     num_t_steps = len(data)
-
-    print data[0]['atoms']['num_atoms']
 
     num_atoms = data[0]['atoms']['num_atoms']
     num_dims = data[0]['atoms']['num_dims']
@@ -30,7 +26,6 @@ def main():
     pos = np.zeros([num_t_steps, num_atoms, num_dims])
 
     t_range = np.zeros([num_t_steps])
-
 
     for i, t in enumerate(data):
         pos[i] = data[i]['atoms']['pos']

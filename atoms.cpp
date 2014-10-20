@@ -102,10 +102,6 @@ int Atoms::apply_toroidal_box_bc(float box_length_i) {
       else if (pos_.col(idx)[d] > box_length_i/2)
         pos_.col(idx)[d] = -box_length_i/2;
 
-      // if (atom_pos(d) < -cell_length/2)
-      //   atom_pos(d) = cell_length/2;
-      // else if (atom_pos(d) > cell_length/2)
-      //   atom_pos(d) = -cell_length/2;
     }
   }
 
@@ -113,11 +109,34 @@ int Atoms::apply_toroidal_box_bc(float box_length_i) {
 
 }
 
+// TODO: Doc
+int Atoms::apply_bounce_box_bc(float box_length_i) {
+
+  for (int idx = 0; idx < num_atoms_; idx++) {
+    for (int d = 0; d < num_dims_; d++) {    
+
+      // TODO: Is there a more efficient, vector operation based way to do 
+      // this?
+
+      // 'Low' boundary in each dim
+      if (pos_.col(idx)[d] <= -box_length_i/2)
+        vel_.col(idx)[d] = -vel_.col(idx)[d];
+      // High boundary in each dim
+      else if (pos_.col(idx)[d] >= box_length_i/2)
+        vel_.col(idx)[d] = -vel_.col(idx)[d];
+    }
+  }
+
+  return 0;    
+
+}
+
 int Atoms::apply_box_bc(float box_length_i, char bc_type_i) {
 
-  if (bc_type_i == 't') {
+  if (bc_type_i == 't')
     apply_toroidal_box_bc(box_length_i);
-  }
+  else if (bc_type_i == 'b')
+    apply_bounce_box_bc(box_length_i);
 
   return 0;
 
@@ -143,27 +162,6 @@ int Atoms::accl(VectorXf &accl_i, int idx_i) {
   vel_.col(idx_i) = vel + accl_i;
   return 0;
 }
-
-// int Atoms::step_with_vel_verlet(float t_step_i) {
-
-//   // Calculate Force Before, No force for now
-//   // ArrayXXf force_before = ArrayXXf::Zero(num_dims_, num_atoms_);
-
-//   // Update Positions
-//   ArrayXXf step_move(num_dims_, num_atoms_);
-//   step_move = vel_*t_step_i; //+ force_before*t_step_i*t_step_i/2;
-//   move(step_move);
-
-//   // Calculate Force After, No force for now
-//   // ArrayXXf force_after = ArrayXXf::Zero(num_dims_, num_atoms_);
-
-//   // Update Velocities
-//   // ArrayXXf accl(num_dims_, num_atoms_);
-//   // step_accl = force_before + force_after*t_step_i/2;
-//   // accl(step_accl);
-
-//   return 0;
-// }
 
 // Same as above but with boundary conditions
 int Atoms::step_with_vel_verlet(float t_step_i, float box_length_i, 

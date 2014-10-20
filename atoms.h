@@ -73,6 +73,7 @@ class Atoms {
 
   // TODO: doc
   int apply_toroidal_box_bc(float box_length_i);
+  int apply_bounce_box_bc(float box_length_i);
   int apply_box_bc(float box_length_i, char bc_type_i);
 
   // Set the velocities of all atoms with an array of 

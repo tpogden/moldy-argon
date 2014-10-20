@@ -4,7 +4,6 @@
 //
 
 #include <iostream>
-#include <iomanip>
 
 #include "sim.h"
 
@@ -100,7 +99,7 @@ int Sim::run(int num_t_steps_i, float t_step_i, char bc_type_i,
     t_ += t_step_i;
 
     // Show progress
-    cout << "    "<< 100.0*i/num_t_steps_i << "%\r";
+    cout << "  "<< (int)100.0*i/num_t_steps_i << "%\r";
     cout.flush();
 
   }
@@ -111,7 +110,7 @@ int Sim::run(int num_t_steps_i, float t_step_i, char bc_type_i,
 
   json_file.close();
 
-  cout << "    100%\r";
+  cout << "  100%\r";
   cout << endl << "Done. Written to " << json_filename_i << "." << endl;
 
   return 0;
