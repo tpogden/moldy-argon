@@ -78,12 +78,10 @@ int Sim::write_json_file(string & json_filename_i) {
 
 // Run ________________________________________________________________________
 
-int Sim::run(int num_t_steps_i, float t_step_i, string & json_filename_i) {
-
-  // string filename = "sim.json";
+int Sim::run(int num_t_steps_i, float t_step_i, char bc_type_i,
+  string & json_filename_i) {
 
   t_ = 0.0;
-  // set_t(0.0);
 
   ofstream json_file;
   json_file.open(json_filename_i.c_str());
@@ -95,11 +93,9 @@ int Sim::run(int num_t_steps_i, float t_step_i, string & json_filename_i) {
     write_json_file(json_file);
     json_file << "," << endl;
     
-    // atoms_->step_with_vel_verlet(t_step_i);
-    atoms_->step_with_vel_verlet(t_step_i, box_length_);
+    atoms_->step_with_vel_verlet(t_step_i, box_length_, bc_type_i);
     t_ += t_step_i;
 
-    // cout << atoms_->get_pos() << endl;
   }
 
   write_json_file(json_file);

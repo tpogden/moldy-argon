@@ -29,8 +29,9 @@ int main() {
   // Run the simulation.
   int num_t_steps = 1000;
   float t_step = 0.1;
+  char bc_type = 't'; // Toroidal Boundary Conditions
   string filename = "sim_test_a02.json";
-  sim.run(num_t_steps, t_step, filename);
+  sim.run(num_t_steps, t_step, bc_type, filename);
 
   return 0;
 
