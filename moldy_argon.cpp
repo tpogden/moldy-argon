@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
     // Check that we haven't finished parsing already
     if (i + 1 != argc) {
       if (string(argv[i]) == "--num-dims") // Num dims
-        num_atoms = atoi(argv[i+1]);
+        num_dims = atoi(argv[i+1]);
       else if (string(argv[i]) == "--num-atoms") // Num atoms
         num_atoms = atoi(argv[i+1]);
       else if (string(argv[i]) == "--box-length") // Box length
