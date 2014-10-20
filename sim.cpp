@@ -34,6 +34,11 @@ int Sim::set_box_length(float box_length_i) {
   box_length_ = box_length_i; return 0;
 }
 
+int Sim::set_atoms_pos_random_in_box() { 
+  atoms_->set_pos_random(box_length_);
+  return 0;
+}
+
 // Gets _______________________________________________________________________
 
 float Sim::get_t() const { return t_; }

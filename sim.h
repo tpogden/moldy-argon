@@ -51,6 +51,10 @@ class Sim {
   // dimension).
   int set_box_length(float box_length_i);
 
+  // Sets the positions of the atoms to be a uniform random distribution within
+  // the box_length.
+  int set_atoms_pos_random_in_box();
+
   // Gets _____________________________________________________________________
 
   // Returns the current time of the simulation.
