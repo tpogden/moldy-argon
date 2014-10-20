@@ -85,6 +85,34 @@ int Atoms::move(VectorXf &move_i, int idx_i) {
   return 0;
 }
 
+// NOTE: Will only work within one box length away right now. 
+// TODO: improve that
+int Atoms::apply_toroidal_box_bc(float box_length_i) {
+
+  for (int idx = 0; idx < num_atoms_; idx++) {
+    for (int d = 0; d < num_dims_; d++) {    
+
+      // TODO: Is there a more efficient, vector operation based way to do 
+      // this?
+
+      // 'Low' boundary in each dim
+      if (pos_.col(idx)[d] < -box_length_i/2)
+        pos_.col(idx)[d] = box_length_i/2;
+      // High boundary in each dim
+      else if (pos_.col(idx)[d] > box_length_i/2)
+        pos_.col(idx)[d] = -box_length_i/2;
+
+      // if (atom_pos(d) < -cell_length/2)
+      //   atom_pos(d) = cell_length/2;
+      // else if (atom_pos(d) > cell_length/2)
+      //   atom_pos(d) = -cell_length/2;
+    }
+  }
+
+  return 0;
+
+}
+
 int Atoms::set_vel(ArrayXXf &vel_i) { vel_ = vel_i; return 0; }
 
 int Atoms::set_vel(VectorXf &vel_i, int idx_i) { 
@@ -125,6 +153,31 @@ int Atoms::step_with_vel_verlet(float t_step_i) {
   // accl(step_accl);
 
   return 0;
+}
+
+// Same as above but with boundary conditions
+int Atoms::step_with_vel_verlet(float t_step_i, float box_length_i) {
+
+  // Calculate Force Before, No force for now
+  // ArrayXXf force_before = ArrayXXf::Zero(num_dims_, num_atoms_);
+
+  // Update Positions
+  ArrayXXf step_move(num_dims_, num_atoms_);
+  step_move = vel_*t_step_i; //+ force_before*t_step_i*t_step_i/2;
+  move(step_move);
+
+  apply_toroidal_box_bc(box_length_i);
+
+  // Calculate Force After, No force for now
+  // ArrayXXf force_after = ArrayXXf::Zero(num_dims_, num_atoms_);
+
+  // Update Velocities
+  // ArrayXXf accl(num_dims_, num_atoms_);
+  // step_accl = force_before + force_after*t_step_i/2;
+  // accl(step_accl);
+
+  return 0;
+
 }
 
 // Gets _______________________________________________________________________

@@ -95,7 +95,8 @@ int Sim::run(int num_t_steps_i, float t_step_i, string & json_filename_i) {
     write_json_file(json_file);
     json_file << "," << endl;
     
-    atoms_->step_with_vel_verlet(t_step_i);
+    // atoms_->step_with_vel_verlet(t_step_i);
+    atoms_->step_with_vel_verlet(t_step_i, box_length_);
     t_ += t_step_i;
 
     // cout << atoms_->get_pos() << endl;

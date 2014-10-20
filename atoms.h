@@ -71,6 +71,9 @@ class Atoms {
   // Move the idx'th atom with a vector [num_dims]
   int move(VectorXf &move_i, int idx_i);
 
+  // TODO: doc
+  int apply_toroidal_box_bc(float box_length_i);
+
   // Set the velocities of all atoms with an array of 
   // vectors [num_dims, num_atoms].
   int set_vel(ArrayXXf &vel_i);
@@ -90,7 +93,7 @@ class Atoms {
   // Verlet' algorithm, given a time step.
   // http://en.wikipedia.org/wiki/Verlet_integration#Velocity_Verlet
   int step_with_vel_verlet(float t_step_i);
-
+  int step_with_vel_verlet(float t_step_i, float box_length_i);
   // Gets _____________________________________________________________________
 
 
