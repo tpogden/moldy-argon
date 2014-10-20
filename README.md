@@ -25,9 +25,9 @@ Parameters you can set for the simulations, with [default value].
 * `--num-atoms`
   number of atoms [10]
 * `--box-length`
-  length of the box containing the atoms, in each dimension. [2]
+  length of the box containing the atoms, in each dimension. [10.0]
 * `--max-speed`
-  max speed ofthe atoms. [2]
+  max speed ofthe atoms. [1.0]
 * `--t-step` 
   the time step [0.1]
 * `--num-t-steps` 
