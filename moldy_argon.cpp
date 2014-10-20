@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
       else if (string(argv[i]) == "--num-t-steps") // Number of time steps
         num_t_steps = atoi(argv[i+1]);
       else if (string(argv[i]) == "--bc-type") // Boundary condition type
-        num_t_steps = atoi(argv[i+1]);
+        bc_type = atoi(argv[i+1]);
       else if (string(argv[i]) == "--filename") // Filename
         filename = argv[i+1];
     }
@@ -48,12 +48,12 @@ int main(int argc, char* argv[]) {
 
   cout << "Num dims: " << num_dims << endl;
   cout << "Num atoms: " << num_atoms << endl;
-
   cout << "Box length: " << box_length << endl; 
   cout << "Max speed: " << max_speed << endl;
-
   cout << "Time step: " << t_step << endl;
   cout << "Num time steps: " << num_t_steps << endl;
+  cout << "BC Type: " << bc_type << endl;
+  cout << "Filename: " << filename << endl;
 
   Sim sim(box_length, num_dims, num_atoms);   
 
