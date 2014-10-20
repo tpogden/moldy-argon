@@ -25,7 +25,7 @@ def main():
 
     pos = np.zeros([num_t_steps, num_atoms, num_dims])
     t_range = np.zeros([num_t_steps])
-    
+
     for i, t in enumerate(data):
         pos[i] = data[i]['atoms']['pos']
         t_range[i] = data[i]['t']
@@ -39,19 +39,19 @@ def main():
     x = pos[0,:,0]
     y = pos[0,:,1]
 
-    scat = ax.scatter(x, y, c='b', s=10, animated=True)
-
-    # plot, = ax.plot([], [], 'o')
+    scat = ax.scatter(x, y)
 
     t_text = ax.text(0.02, 0.95, '', transform=ax.transAxes)
+
+    xy = [x,y]
 
     # Initialization function: plot the background of each frame
     def init():
         x = pos[0,:,0]
         y = pos[0,:,1]
-        # scat = ax.scatter(x, y, c=c, s=s, animated=True)
-        scat = ax.scatter(x, y, c='b', s=10, animated=True)
-        # plot.set_data([], [])
+        scat.set_offsets([x, y])
+        # scat = ax.scatter(x, y, animated=True)
+        # scat = ax.scatter(x, y, c='b', s=10) # , animated=True)
         t_text.set_text('')
         return scat, t_text
 
@@ -59,17 +59,22 @@ def main():
     def animate(i):
         x = pos[i,:,0]
         y = pos[i,:,1]
-        scat = ax.scatter(x, y, c='b', s=10, animated=True)
-        # plot.set_data(x, y)
+        scat.set_offsets([x, y]) #, animated=True)
+        # scat.set_offsets(x, y, c='b', s=10) #, animated=True)
+        # scat = ax.scatter(x, y, animated=True)
         t_text.set_text('t = %.2f' % t_range[i])
+        fig.canvas.draw()
         return scat, t_text
 
-    # call animator.  blit means only re-draw the parts that have changed.
-    # anim = animation.FuncAnimation(fig, animate, init_func=init,
-    #                                frames=len(t_range),
-    #                                interval=200)#, blit=True)
+    # # call animator.  blit means only re-draw the parts that have changed.
+    # # anim = animation.FuncAnimation(fig, animate, init_func=init,
+    # #                                frames=len(t_range),
+    # #                                interval=200)#, blit=True)
 
-    # anim = animation.FuncAnimation(fig, animate, init_func=init, interval=50)
+    anim = animation.FuncAnimation(fig, animate, init_func=init, interval=50, blit=False)
+
+    # anim = animation.FuncAnimation(fig, animate, init_func=init, frames=num_t_steps,
+        # interval=50, blit=False)
 
     plt.show()
 

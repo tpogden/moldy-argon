@@ -1,14 +1,9 @@
-//
-//
-//
-//
+// atoms.cpp: Tommy Ogden <t@ogden.eu>
+// Description: 
 
 #include <iostream>
 
 #include "atoms.h"
-
-// Constructors & Destructors _________________________________________________
-
 
 Atoms::Atoms(int num_dims_i, int num_atoms_i, RowVectorXf &mass_i, 
              ArrayXXf &pos_i, ArrayXXf &vel_i) {
@@ -18,8 +13,6 @@ Atoms::Atoms(int num_dims_i, int num_atoms_i, RowVectorXf &mass_i,
 Atoms::Atoms(int num_dims_i, int num_atoms_i) {
   init(num_dims_i, num_atoms_i);
 }
-
-// Inits ______________________________________________________________________
 
 int Atoms::init(int num_dims_i, int num_atoms_i, RowVectorXf &mass_i, 
                 ArrayXXf &pos_i, ArrayXXf &vel_i) { 
@@ -48,10 +41,6 @@ int Atoms::init(int num_dims_i, int num_atoms_i) {
 
   return 0;
 }
-
-// Sets _______________________________________________________________________
-
-
 
 int Atoms::set_num_dims(int num_dims_i) { num_dims_ = num_dims_i; return 0; }
 
@@ -191,10 +180,6 @@ int Atoms::step_with_vel_verlet(float t_step_i, float box_length_i,
 
 }
 
-// int Atoms::step_with_vel_verlet(float t_step_i, float box_length)
-
-// Gets _______________________________________________________________________
-
 int Atoms::get_num_dims() const { return num_dims_; }
 
 int Atoms::get_num_atoms() const { return num_atoms_; }
@@ -212,14 +197,12 @@ ArrayXXf Atoms::get_vel() const { return vel_; }
 VectorXf Atoms::get_vel(int idx_i) const { return vel_.col(idx_i); }
 
 string Atoms::get_info() const {
-
   stringstream info_ss;
   info_ss.precision(4);
   info_ss << "Mass:" << endl << get_mass() << endl;
   info_ss << "Pos:" << endl << get_pos() << endl; 
   info_ss << "Vel:" << endl << get_vel(); 
   return info_ss.str();
-
 }
 
 string Atoms::get_json_num_atoms() const {
@@ -237,67 +220,42 @@ string Atoms::get_json_num_dims() const {
 }
 
 string Atoms::get_json_mass() const {
-
   stringstream mass_ss;
   mass_ss.precision(4);
-
   mass_ss << "\"mass\": " << "[";
-
-  for (int n = 0; n < get_num_atoms()-1; n++) {
+  for (int n = 0; n < get_num_atoms()-1; n++)
     mass_ss << get_mass(n) << ", ";
-  }
   // Last atom
-  mass_ss << get_mass(get_num_atoms()-1);
-
-  mass_ss << "]";
-
+  mass_ss << get_mass(get_num_atoms()-1) << "]";
   return mass_ss.str();
-
 }
 
 string Atoms::get_json_pos() const {
-
   stringstream pos_ss;
   pos_ss.precision(4);
-
   pos_ss << "\"pos\": " << "[" << endl;
-
   for (int n = 0; n < get_num_atoms()-1; n++) {
     pos_ss << "[";
-    for (int i = 0; i < get_num_dims()-1; i++) {
-
+    for (int i = 0; i < get_num_dims()-1; i++)
       pos_ss << get_pos(n)[i] << ", ";
-
-    } 
     pos_ss << get_pos(n).tail(1) << "]," << endl;
   }
   // Last atom
   pos_ss << "[";
-  for (int i = 0; i < get_num_dims()-1; i++) {
+  for (int i = 0; i < get_num_dims()-1; i++)
     pos_ss << get_pos(get_num_atoms()-1)[i] << ", ";
-  } 
-  pos_ss << get_pos(get_num_atoms()-1).tail(1) << "]";
-
-  pos_ss << "]";
-
+  pos_ss << get_pos(get_num_atoms()-1).tail(1) << "]]";
   return pos_ss.str();
-
 }
 
 string Atoms::get_json_vel() const {
-
   stringstream vel_ss;
   vel_ss.precision(4);
-
   vel_ss << "\"vel\": " << "[" << endl;
-
   for (int n = 0; n < get_num_atoms()-1; n++) {
     vel_ss << "[";
-    for (int i = 0; i < get_num_dims()-1; i++) {
-
+    for (int i = 0; i < get_num_dims()-1; i++)
       vel_ss << get_vel(n)[i] << ", ";
-
-    } 
     vel_ss << get_vel(n).tail(1) << "]," << endl;
   }
   // Last atom
@@ -305,12 +263,8 @@ string Atoms::get_json_vel() const {
   for (int i = 0; i < get_num_dims()-1; i++) {
     vel_ss << get_vel(get_num_atoms()-1)[i] << ", ";
   } 
-  vel_ss << get_vel(get_num_atoms()-1).tail(1) << "]";
-
-  vel_ss << "]";
-
+  vel_ss << get_vel(get_num_atoms()-1).tail(1) << "]]";
   return vel_ss.str();
-
 }
 
 string Atoms::get_json() const {
@@ -331,29 +285,21 @@ string Atoms::get_json() const {
 }
 
 int Atoms::write_json_file(ofstream & json_o_file_i) {
-
   if (json_o_file_i.is_open()) {
       json_o_file_i << get_json();
       return 0;
   }
-
   else {
     cout << "Filestream closed. Unable to write file." << endl; 
     return 1;
   }
-
 }
 
 int Atoms::write_json_file(string & json_filename_i) {
-
     ofstream json_o_file;
     json_o_file.open(json_filename_i.c_str());
-   
     write_json_file(json_o_file);
-
     json_o_file.close();
-
     return 0;
-
 }
 

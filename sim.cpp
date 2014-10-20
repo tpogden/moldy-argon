@@ -1,7 +1,5 @@
-//
-//
-//
-//
+// sim.cpp: Tommy Ogden <t@ogden.eu>
+// Description: 
 
 #include <iostream>
 
