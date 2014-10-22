@@ -60,7 +60,7 @@ int Atoms::set_pos(VectorXf &pos_i, int idx_i) {
 }
 
 int Atoms::set_pos_random(float box_length_i) {
-  ArrayXXf rand_pos(get_num_dims(), get_num_atoms());
+  ArrayXXf rand_pos(num_dims_, num_atoms_);
   rand_pos.setRandom(); rand_pos = rand_pos*box_length_i/2.0;    
   set_pos(rand_pos);
   return 0;
@@ -74,50 +74,30 @@ int Atoms::move(VectorXf &move_i, int idx_i) {
   return 0;
 }
 
-// NOTE: Will only work within one box length away right now. 
-// TODO: improve that
+// TODO: Doc
 int Atoms::apply_toroidal_box_bc(float box_length_i) {
-
   for (int idx = 0; idx < num_atoms_; idx++) {
     for (int d = 0; d < num_dims_; d++) {    
-
-      // TODO: Is there a more efficient, vector operation based way to do 
-      // this?
-
-      // 'Low' boundary in each dim
-      if (pos_.col(idx)[d] < -box_length_i/2)
+      if (pos_.col(idx)[d] < -box_length_i/2) // Low boundary in each dim
         pos_.col(idx)[d] = box_length_i/2;
-      // High boundary in each dim
-      else if (pos_.col(idx)[d] > box_length_i/2)
+      else if (pos_.col(idx)[d] > box_length_i/2) // High boundary in each dim
         pos_.col(idx)[d] = -box_length_i/2;
-
     }
   }
-
   return 0;
-
 }
 
 // TODO: Doc
 int Atoms::apply_bounce_box_bc(float box_length_i) {
-
   for (int idx = 0; idx < num_atoms_; idx++) {
     for (int d = 0; d < num_dims_; d++) {    
-
-      // TODO: Is there a more efficient, vector operation based way to do 
-      // this?
-
-      // 'Low' boundary in each dim
-      if (pos_.col(idx)[d] <= -box_length_i/2)
+      if (pos_.col(idx)[d] <= -box_length_i/2) // Low boundary in each dim
         vel_.col(idx)[d] = -vel_.col(idx)[d];
-      // High boundary in each dim
-      else if (pos_.col(idx)[d] >= box_length_i/2)
+      else if (pos_.col(idx)[d] >= box_length_i/2) // High boundary in each dim
         vel_.col(idx)[d] = -vel_.col(idx)[d];
     }
   }
-
   return 0;    
-
 }
 
 int Atoms::apply_box_bc(float box_length_i, char bc_type_i) {
