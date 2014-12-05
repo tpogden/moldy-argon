@@ -52,6 +52,8 @@ class Sim {
   // the box_length.
   int set_atoms_pos_random_in_box();
 
+  int set_atoms_vel_mb(float vel_width_i, float vel_max_i);
+
   // Gets _____________________________________________________________________
 
   // Returns the current time of the simulation.

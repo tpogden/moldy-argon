@@ -84,6 +84,9 @@ class Atoms {
   // Set the velocities of all the atoms with a uniform random distribution 
   // [-max_speed, max_speed] in each dimension.
   int set_vel_random(float max_speed);
+  // TODO: Doc
+  int set_vel_mb(float a_i, float vel_max_i);
+
   // Accelerate (i.e. increase the velocity of) all of the atoms with an array 
   // of vectors [num_dims, num_atoms]
   int accl(ArrayXXf &accl_i);
@@ -119,6 +122,9 @@ class Atoms {
   ArrayXXf get_vel() const;
   // Return a vector [num_dims] giving the velocity of the idx'th atom.  
   VectorXf get_vel(int idx_i) const;
+
+  VectorXf get_speed() const;
+  float get_speed(int idx_i) const;
 
   // Returns the masses, positions and velocities, mostly for cout debugging.
   string get_info() const;

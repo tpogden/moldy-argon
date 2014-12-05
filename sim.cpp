@@ -37,6 +37,11 @@ int Sim::set_atoms_pos_random_in_box() {
   return 0;
 }
 
+int Sim::set_atoms_vel_mb(float vel_width_i, float vel_max_i) {
+  atoms_->set_vel_mb(vel_width_i, vel_max_i);
+  return 0;
+}
+
 // Gets _______________________________________________________________________
 
 float Sim::get_t() const { return t_; }
