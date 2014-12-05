@@ -117,6 +117,10 @@ class Atoms {
   // Return a vector [num_dims] giving the position of the idx'th atom.
   VectorXf get_pos(int idx_i) const;
 
+  VectorXf get_vector(int a_i, int b_i) const;
+
+  float get_distance(int a_i, int b_i) const;
+
   // Return an array of vectors [num_dims, num_atoms] giving the velocities of 
   // each of the atoms.
   ArrayXXf get_vel() const;

@@ -5,11 +5,11 @@
 
 #include "atoms.h"
 
-const float pi = atan(1)*4;
+const float PI = atan(1)*4;
 
 // Maxwell-Boltzmann PDF for a single dimension
 float mb_pdf_1d(float a, float v){
-    return 1/sqrt(2.0*pi)/a * exp(-pow(v/a,2)/2.);
+    return 1/sqrt(2.0*PI)/a * exp(-pow(v/a,2)/2.);
 }
 
 // Atoms class
@@ -209,6 +209,17 @@ float Atoms::get_mass(int idx_i) const { return mass_[idx_i]; }
 ArrayXXf Atoms::get_pos() const { return pos_; }
 
 VectorXf Atoms::get_pos(int idx_i) const { return pos_.col(idx_i); }
+
+// TODO: Doc. Vector from a to b.
+VectorXf Atoms::get_vector(int a_i, int b_i) const { 
+  return get_pos(b_i) - get_pos(a_i); 
+}
+
+float Atoms::get_distance(int a_i, int b_i) const { 
+  return get_vector(a_i, b_i).norm();
+}
+
+// VectorXf Atoms::
 
 ArrayXXf Atoms::get_vel() const { return vel_; }
 

@@ -72,7 +72,11 @@ int main(int argc, char* argv[]) {
   sim.set_atoms_pos_random_in_box();
   sim.set_atoms_vel_mb(vel_width, vel_max);
 
-  sim.run(num_t_steps, t_step, bc_type, filename);
+  cout << sim.get_atoms()->get_pos() << endl;
+  cout << sim.get_atoms()->get_vector(0, 1) << endl;
+  cout << sim.get_atoms()->get_distance(0, 1) << endl;
+
+  // sim.run(num_t_steps, t_step, bc_type, filename);
 
   return 0;
 
