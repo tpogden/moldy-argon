@@ -5,6 +5,15 @@
 
 #include "atoms.h"
 
+const float pi = atan(1)*4;
+
+// Maxwell-Boltzmann PDF for a single dimension
+float mb_pdf_1d(float a, float v){
+    return 1/sqrt(2.0*pi)/a * exp(-pow(v/a,2)/2.);
+}
+
+// Atoms class
+
 Atoms::Atoms(int num_dims_i, int num_atoms_i, RowVectorXf &mass_i, 
              ArrayXXf &pos_i, ArrayXXf &vel_i) {
   init(num_dims_i, num_atoms_i, mass_i, pos_i, vel_i);
@@ -124,6 +133,35 @@ int Atoms::set_vel_random(float max_speed_i) {
   return 0;
 }
 
+// TODO: Document rejection method
+int Atoms::set_vel_mb(float a_i, float vel_max_i) {
+  // Max value of the PDF is at 0
+  float p_max = mb_pdf_1d(a_i, 0.0);
+  bool accept; // TODO: Doc
+  float p, v_test; // TODO: doc here
+
+  ArrayXXf vel(get_num_dims(), get_num_atoms());
+
+  for (int idx = 0; idx < num_atoms_; idx++) {
+    for (int d = 0; d < num_dims_; d++) { 
+      accept = false;
+      // TODO: Document this loop
+      while (accept == false) {
+        // Generate a psuedorandom float between -vel_max_i and vel_max_i
+        v_test = (float)rand()/RAND_MAX*vel_max_i*2.0 - vel_max_i;
+        // Generate a psuedorandom float between 0 and p_max
+        p = (float)rand()/RAND_MAX*p_max;
+        if (p <= mb_pdf_1d(a_i, v_test)) {
+          vel(d, idx) = v_test;
+          accept = true;
+        }
+      }
+    }
+  }
+  set_vel(vel);
+  return 0;
+}
+
 int Atoms::accl(ArrayXXf &accl_i) { vel_ += accl_i; return 0; }
 
 int Atoms::accl(VectorXf &accl_i, int idx_i) {
@@ -175,6 +213,20 @@ VectorXf Atoms::get_pos(int idx_i) const { return pos_.col(idx_i); }
 ArrayXXf Atoms::get_vel() const { return vel_; }
 
 VectorXf Atoms::get_vel(int idx_i) const { return vel_.col(idx_i); }
+
+VectorXf Atoms::get_speed() const {
+  VectorXf speed(num_atoms_);
+  for (int idx = 0; idx < num_atoms_; idx++)
+    speed[idx] = get_speed(idx);
+  return speed;
+}
+
+float Atoms::get_speed(int idx_i) const { 
+  VectorXf vel = vel_.col(idx_i);
+  return vel.norm();
+}
+
+// TODO: get_ave_speed()
 
 string Atoms::get_info() const {
   stringstream info_ss;
@@ -282,4 +334,3 @@ int Atoms::write_json_file(string & json_filename_i) {
     json_o_file.close();
     return 0;
 }
-
