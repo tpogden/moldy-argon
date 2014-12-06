@@ -12,6 +12,25 @@ float mb_pdf_1d(float a, float v){
     return 1/sqrt(2.0*PI)/a * exp(-pow(v/a,2)/2.);
 }
 
+// Lennard Jones force
+float force_lj(float r_i, float cutoff_i) {
+  // if (r_i == 0.0)
+    // r_i = 0.0001; // Avoid division by zero.
+
+  if (r_i < 1.0) // soften close by and avoid div zero.
+    r_i = 1.0;
+
+  float force_mag = 0.0;
+  // TODO: Doc
+  if ((r_i < cutoff_i) || (cutoff_i == 0)) {
+    float cutoff_force = 0.0;
+    if (cutoff_i != 0.0)
+      cutoff_force = -24.0*(2.0*pow(cutoff_i,-13) - pow(cutoff_i,-7));
+    force_mag = -24.0*(2.0*pow(r_i,-13) - pow(r_i,-7)) - cutoff_force;
+  }
+  return force_mag;
+}
+
 // Atoms class
 
 Atoms::Atoms(int num_dims_i, int num_atoms_i, RowVectorXf &mass_i, 
@@ -174,25 +193,25 @@ int Atoms::accl(VectorXf &accl_i, int idx_i) {
 int Atoms::step_with_vel_verlet(float t_step_i, float box_length_i, 
   char bc_type_i) {
 
-  // Calculate Force Before, No force for now
-  // ArrayXXf force_before = ArrayXXf::Zero(num_dims_, num_atoms_);
+  char force_type = 'l'; // LJ
+  float cutoff = 0.0;
+
+  ArrayXXf force_before = get_force(force_type, cutoff);
 
   // Update Positions
   ArrayXXf step_move(num_dims_, num_atoms_);
-  step_move = vel_*t_step_i; //+ force_before*t_step_i*t_step_i/2;
+  step_move = vel_*t_step_i + 0.5*force_before*t_step_i*t_step_i;
   move(step_move);
 
   apply_box_bc(box_length_i, bc_type_i);
 
-  // apply_toroidal_box_bc(box_length_i);
-
-  // Calculate Force After, No force for now
-  // ArrayXXf force_after = ArrayXXf::Zero(num_dims_, num_atoms_);
+  // Calculate Force After
+  ArrayXXf force_after = get_force(force_type, cutoff);
 
   // Update Velocities
-  // ArrayXXf accl(num_dims_, num_atoms_);
-  // step_accl = force_before + force_after*t_step_i/2;
-  // accl(step_accl);
+  ArrayXXf step_accl(num_dims_, num_atoms_); // TODO: join these lines?
+  step_accl = (force_before + force_after)*(0.5*t_step_i);
+  accl(step_accl);
 
   return 0;
 
@@ -215,11 +234,52 @@ VectorXf Atoms::get_vector(int a_i, int b_i) const {
   return get_pos(b_i) - get_pos(a_i); 
 }
 
+ArrayXXf Atoms::get_vector(int idx_i) const {
+  ArrayXXf vec = ArrayXXf::Zero(num_dims_, num_atoms_);
+  for (int i = 0; i < num_atoms_; i++)
+    vec.col(i) = get_vector(idx_i, i);
+  return vec;
+}
+
 float Atoms::get_distance(int a_i, int b_i) const { 
   return get_vector(a_i, b_i).norm();
 }
 
-// VectorXf Atoms::
+// TODO: Doc. LJ force on a given atom.
+VectorXf Atoms::get_force_lj(int idx_i, float cutoff_i) const {
+  VectorXf force = VectorXf::Zero(num_dims_);
+  ArrayXXf vec = get_vector(idx_i);
+  // need a vector to take norm, can't just use column of 2d array.
+  VectorXf vec_atom = VectorXf::Zero(num_dims_);
+  float r, force_mag; // distance, force magnitude
+  VectorXf dir; // direction, unit vector
+  for (int i = 0; i < num_atoms_; i++) {
+    // TODO: ignore when i = idx 
+    vec_atom = vec.col(i);
+    r = vec_atom.norm();
+    if (r != 0.0) {
+      force_mag = force_lj(r, cutoff_i);
+      dir = vec.col(i)/r;
+      force += force_mag*dir;
+    }
+  }
+  return force;
+}
+
+// TODO: Doc. LJ force on all atoms
+ArrayXXf Atoms::get_force_lj(float cutoff_i) const {
+  ArrayXXf force = ArrayXXf::Zero(num_dims_, num_atoms_);
+  for (int i = 0; i < num_atoms_; i++)
+    force.col(i) = get_force_lj(i, cutoff_i);
+  return force;
+}
+
+ArrayXXf Atoms::get_force(char force_type_i, float cutoff_i) const {
+  ArrayXXf force = ArrayXXf::Zero(num_dims_, num_atoms_);
+  if (force_type_i == 'l') // Lennard-Jones
+    force = get_force_lj(cutoff_i);
+  return force; 
+}
 
 ArrayXXf Atoms::get_vel() const { return vel_; }
 

@@ -23,8 +23,8 @@ int main(int argc, char* argv[]) {
   float vel_width = 1.0;
   float vel_max = 10 * vel_width; // if this is too high, lots of rejections
 
-  float t_step = 0.1;
-  int num_t_steps = 100;
+  float t_step = 0.004; //0.1;
+  int num_t_steps = 1000;
 
   char* bc_type_ptr;
   char bc_type = 't'; // Toroidal Boundary Conditions
@@ -72,11 +72,7 @@ int main(int argc, char* argv[]) {
   sim.set_atoms_pos_random_in_box();
   sim.set_atoms_vel_mb(vel_width, vel_max);
 
-  cout << sim.get_atoms()->get_pos() << endl;
-  cout << sim.get_atoms()->get_vector(0, 1) << endl;
-  cout << sim.get_atoms()->get_distance(0, 1) << endl;
-
-  // sim.run(num_t_steps, t_step, bc_type, filename);
+  sim.run(num_t_steps, t_step, bc_type, filename);
 
   return 0;
 

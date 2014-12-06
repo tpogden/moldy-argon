@@ -118,8 +118,18 @@ class Atoms {
   VectorXf get_pos(int idx_i) const;
 
   VectorXf get_vector(int a_i, int b_i) const;
+  ArrayXXf get_vector(int idx_i) const;
+
+  VectorXf get_force_lj(int idx_i, float cutoff_i) const;
+  ArrayXXf get_force_lj(float cutoff_i) const;
+
+  ArrayXXf get_force(char force_type_i, float cutoff_i) const;
 
   float get_distance(int a_i, int b_i) const;
+  // ArrayXXf get_distance_matrix() const;
+
+  // // Forces
+  // ArrayXXf get_force_matrix_lj(float cutoff_i) const;
 
   // Return an array of vectors [num_dims, num_atoms] giving the velocities of 
   // each of the atoms.
