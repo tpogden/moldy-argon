@@ -234,6 +234,14 @@ VectorXf Atoms::get_vector(int a_i, int b_i) const {
   return get_pos(b_i) - get_pos(a_i); 
 }
 
+// VectorXf Atoms::get_vector(int a_i, int b_i, char bc_type_i) const {
+//   VectorXf vec = get_pos(b_i) - get_pos(a_i);
+//   if (bc_type_i == 't')
+//     for (int d = 0; )
+//   else
+//     return vec; 
+// }
+
 ArrayXXf Atoms::get_vector(int idx_i) const {
   ArrayXXf vec = ArrayXXf::Zero(num_dims_, num_atoms_);
   for (int i = 0; i < num_atoms_; i++)
@@ -241,38 +249,72 @@ ArrayXXf Atoms::get_vector(int idx_i) const {
   return vec;
 }
 
+// float Atoms::get_distance(int a_i, int b_i, char bc_type_i) const { 
+//   return get_vector(a_i, b_i, bc_type_i).norm();
+// }
+
 float Atoms::get_distance(int a_i, int b_i) const { 
   return get_vector(a_i, b_i).norm();
 }
 
-// TODO: Doc. LJ force on a given atom.
-VectorXf Atoms::get_force_lj(int idx_i, float cutoff_i) const {
+// TODO: Doc.
+VectorXf Atoms::get_force_lj(int a_i, int b_i, float cutoff_i) const {
   VectorXf force = VectorXf::Zero(num_dims_);
-  ArrayXXf vec = get_vector(idx_i);
-  // need a vector to take norm, can't just use column of 2d array.
-  VectorXf vec_atom = VectorXf::Zero(num_dims_);
   float r, force_mag; // distance, force magnitude
-  VectorXf dir; // direction, unit vector
-  for (int i = 0; i < num_atoms_; i++) {
-    // TODO: ignore when i = idx 
-    vec_atom = vec.col(i);
-    r = vec_atom.norm();
-    if (r != 0.0) {
-      force_mag = force_lj(r, cutoff_i);
-      dir = vec.col(i)/r;
-      force += force_mag*dir;
+  r = get_distance(a_i, b_i);
+  if (r != 0.0) {
+    force_mag = force_lj(r, cutoff_i);
+    force = get_vector(a_i, b_i)/r*force_mag;
+  }
+  return force;
+}
+
+// TODO: Doc. LJ force on a given atom. USE PAIR FUNCTION if keeping
+// VectorXf Atoms::get_force_lj(int idx_i, float cutoff_i) const {
+//   VectorXf force = VectorXf::Zero(num_dims_);
+//   ArrayXXf vec = get_vector(idx_i);
+//   // need a vector to take norm, can't just use column of 2d array.
+//   VectorXf vec_atom = VectorXf::Zero(num_dims_);
+//   float r, force_mag; // distance, force magnitude
+//   VectorXf dir; // direction, unit vector
+//   for (int i = 0; i < num_atoms_; i++) {
+//     // TODO: ignore when i = idx 
+//     vec_atom = vec.col(i);
+//     r = vec_atom.norm(); // use distance measure
+//     if (r != 0.0) {
+//       force_mag = force_lj(r, cutoff_i);
+//       dir = vec.col(i)/r;
+//       force += force_mag*dir;
+//     }
+//   }
+//   return force;
+// }
+
+// TODO: Doc
+ArrayXXf Atoms::get_force_lj(float cutoff_i) const {
+  ArrayXXf force = ArrayXXf::Zero(num_dims_, num_atoms_);
+  ArrayXf force_ab = ArrayXf::Zero(num_dims_);
+  for (int a = 0; a < num_atoms_; a++) {
+    for (int b = a+1; b < num_atoms_; b++) {
+      force_ab = get_force_lj(a, b, cutoff_i);
+      force.col(a) += force_ab;
+      force.col(b) -= force_ab;
     }
   }
   return force;
 }
 
-// TODO: Doc. LJ force on all atoms
-ArrayXXf Atoms::get_force_lj(float cutoff_i) const {
-  ArrayXXf force = ArrayXXf::Zero(num_dims_, num_atoms_);
-  for (int i = 0; i < num_atoms_; i++)
-    force.col(i) = get_force_lj(i, cutoff_i);
-  return force;
-}
+
+// TODO: Doc. LJ force on all atoms. We're calculating each pair force twice here.
+// should make use of symmetry to half.
+// ArrayXXf Atoms::get_force_lj(float cutoff_i) const {
+//   ArrayXXf force = ArrayXXf::Zero(num_dims_, num_atoms_);
+//   for (int i = 0; i < num_atoms_; i++)
+//     force.col(i) = get_force_lj(i, cutoff_i);
+//   return force;
+// }
+
+
 
 ArrayXXf Atoms::get_force(char force_type_i, float cutoff_i) const {
   ArrayXXf force = ArrayXXf::Zero(num_dims_, num_atoms_);
