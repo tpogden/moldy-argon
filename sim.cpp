@@ -81,8 +81,8 @@ int Sim::write_json_file(string & json_filename_i) {
 
 // Run ________________________________________________________________________
 
-int Sim::run(int num_t_steps_i, float t_step_i, char bc_type_i,
-  string & json_filename_i) {
+int Sim::run(int num_t_steps_i, float t_step_i, char bc_type_i, 
+             char force_type_i, float cutoff_i, string & json_filename_i) {
 
   // cout.precision(3);
 
@@ -98,7 +98,8 @@ int Sim::run(int num_t_steps_i, float t_step_i, char bc_type_i,
     write_json_file(json_file);
     json_file << "," << endl;
     
-    atoms_->step_with_vel_verlet(t_step_i, box_length_, bc_type_i);
+    atoms_->step_with_vel_verlet(t_step_i, box_length_, bc_type_i,
+                                 force_type_i, cutoff_i);
     t_ += t_step_i;
 
     // Show progress

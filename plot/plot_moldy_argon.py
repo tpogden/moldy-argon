@@ -31,11 +31,13 @@ def main():
         pos[i] = data[i]['atoms']['pos']
         t_range[i] = data[i]['t']
 
+    box_length = 4.
+
     # Set up the figure, axis and plot to animate
     fig = plt.figure(figsize=(8.,8.))
     ax = fig.add_subplot(111)
-    ax.set_xlim([-5., 5.])
-    ax.set_ylim([-5., 5.])
+    ax.set_xlim([-box_length/2, box_length/2])
+    ax.set_ylim([-box_length/2, box_length/2])
 
     plot, = ax.plot([], [], 'o')
 
@@ -60,7 +62,7 @@ def main():
     #                                frames=len(t_range),
     #                                interval=200)#, blit=True)
 
-    anim = animation.FuncAnimation(fig, animate, init_func=init, interval=50)
+    anim = animation.FuncAnimation(fig, animate, init_func=init, interval=1)
 
     plt.show()
 

@@ -66,6 +66,11 @@ class Atoms {
   // Set the positions of all the atoms with a uniform random distribution 
   // in a box [-box_length/2, box_length/2] in each dimension.
   int set_pos_random(float box_length_i);
+
+  int set_pos_random_min(float box_length_i, float min_spacing_i);
+
+  int set_pos_lattice(float box_length_i);
+
   // Move all of the atoms with an array of vectors [num_dims, num_atoms].
   int move(ArrayXXf &move_i);
   // Move the idx'th atom with a vector [num_dims]
@@ -97,8 +102,9 @@ class Atoms {
   // Integrate Newton's equations of motion for the atoms using the 'Velocity
   // Verlet' algorithm, given a time step.
   // http://en.wikipedia.org/wiki/Verlet_integration#Velocity_Verlet
-  int step_with_vel_verlet(float t_step_i);
-  int step_with_vel_verlet(float t_step_i, float box_length_i, char bc_type_i);
+  // int step_with_vel_verlet(float t_step_i);
+  int step_with_vel_verlet(float t_step_i, float box_length_i, char bc_type_i,
+                           char force_type_i, float cutoff_i);
   
   // Gets _____________________________________________________________________
 
@@ -118,8 +124,21 @@ class Atoms {
   VectorXf get_pos(int idx_i) const;
 
   VectorXf get_vector(int a_i, int b_i) const;
+  VectorXf get_vector_box(int a_i, int b_i, float box_length_i) const;
+  // ArrayXXf get_vector(int idx_i) const;
 
   float get_distance(int a_i, int b_i) const;
+  float get_distance_box(int a_i, int b_i, float box_length_i) const;  
+
+  VectorXf get_force_lj(int a_i, int b_i, float cutoff_i) const;
+  VectorXf get_force_lj_box(int a_i, int b_i, float cutoff_i, 
+                            float box_length_i) const;  
+  ArrayXXf get_force_lj(float cutoff_i) const;
+  ArrayXXf get_force_lj_box(float cutoff_i, float box_length_i) const;
+
+  ArrayXXf get_force(char force_type_i, float cutoff_i) const;
+  ArrayXXf get_force_box(char force_type_i, float cutoff_i, 
+                         float box_length_i) const;
 
   // Return an array of vectors [num_dims, num_atoms] giving the velocities of 
   // each of the atoms.
@@ -127,7 +146,9 @@ class Atoms {
   // Return a vector [num_dims] giving the velocity of the idx'th atom.  
   VectorXf get_vel(int idx_i) const;
 
+  // Return a vector containing the speed of each of the atoms.
   VectorXf get_speed() const;
+  // Return the speed of the idx'th atom.
   float get_speed(int idx_i) const;
 
   // Returns the masses, positions and velocities, mostly for cout debugging.
