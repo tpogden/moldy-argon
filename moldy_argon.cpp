@@ -66,10 +66,15 @@ int main(int argc, char* argv[]) {
 
   Sim sim(box_length, num_dims, num_atoms);   
 
-  // Set the positions of the atoms to be a uniform random distribution within
-  // the box length.
+  // Seed random number generator for MB dist
   srand(time(NULL));
-  sim.set_atoms_pos_random_in_box();
+
+  // Assign positions
+  // sim.set_atoms_pos_random_in_box();
+  // sim.get_atoms()->set_pos_random_min(box_length, 1.25);
+  sim.get_atoms()->set_pos_lattice(box_length);
+
+  // Assign velocities, Maxwell-Boltzmann distribution
   sim.set_atoms_vel_mb(vel_width, vel_max);
 
   sim.run(num_t_steps, t_step, bc_type, filename);

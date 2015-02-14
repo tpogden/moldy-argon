@@ -14,11 +14,9 @@ float mb_pdf_1d(float a, float v){
 
 // Lennard Jones force
 float force_lj(float r_i, float cutoff_i) {
-  // if (r_i == 0.0)
-    // r_i = 0.0001; // Avoid division by zero.
 
-  if (r_i < 1.0) // soften close by and avoid div zero.
-    r_i = 1.0;
+  if (r_i < 0.01) // soften close by and avoid div zero.
+    r_i = 0.01;
 
   float force_mag = 0.0;
   // TODO: Doc
@@ -94,6 +92,62 @@ int Atoms::set_pos_random(float box_length_i) {
   return 0;
 }
 
+int Atoms::set_pos_random_min(float box_length_i, float min_spacing_i) {
+
+  ArrayXXf pos = ArrayXXf::Zero(num_dims_, num_atoms_);
+  VectorXf test_pos(num_dims_);
+
+  test_pos.setRandom(); test_pos = test_pos*box_length_i/2.0;  
+  set_pos(test_pos, 0); // put the first one anywhere.
+
+  bool accept;
+
+  for (int i = 1; i < num_atoms_; i++) {
+    cout << "Placing atom " << i << endl;
+    accept = false;       
+    while (accept == false) {
+      test_pos.setRandom(); test_pos = test_pos*box_length_i/2.0;
+      set_pos(test_pos, i);
+      accept = true;
+      for (int j = 0; j < i; j++) {
+        if (get_distance(i, j) < min_spacing_i) // too close!
+        if (get_distance_box(i, j, box_length_i) < min_spacing_i) // too close!
+          accept = false;
+        // TODO: break?
+      }
+    }
+  }
+  return 0;
+}
+
+int Atoms::set_pos_lattice(float box_length_i) {
+
+  int num_spaces = ceil(pow(num_atoms_,(double)1/num_dims_));
+    
+  ArrayXXf pos = ArrayXXf::Zero(num_dims_, num_atoms_);
+
+  for (int i = 0; i < num_atoms_; i++) {
+    cout << i << endl;
+    if (num_dims_ == 2) {
+      pos(0, i) = i/num_spaces;
+      pos(1, i) = i%num_spaces;
+    }
+    else if (num_dims_ == 3) {
+      pos(0, i) = (i/num_spaces)/num_spaces;
+      pos(1, i) = (i/num_spaces)%num_spaces;
+      pos(2, i) = i%num_spaces;
+    }
+  }
+
+  double scale = box_length_i/num_spaces; // TODO: join these lines
+  pos *= scale; 
+  pos -= box_length_i/2;
+
+  set_pos(pos);
+
+  return 0;
+}
+
 int Atoms::move(ArrayXXf &move_i) { pos_ += move_i; return 0; }
 
 int Atoms::move(VectorXf &move_i, int idx_i) {
@@ -108,8 +162,10 @@ int Atoms::apply_toroidal_box_bc(float box_length_i) {
     for (int d = 0; d < num_dims_; d++) {    
       if (pos_.col(idx)[d] < -box_length_i/2) // Low boundary in each dim
         pos_.col(idx)[d] = box_length_i/2;
+        // pos_.col(idx)[d] = box_length_i - pos_.col(idx)[d];
       else if (pos_.col(idx)[d] > box_length_i/2) // High boundary in each dim
         pos_.col(idx)[d] = -box_length_i/2;
+        // pos_.col(idx)[d] = pos_.col(idx)[d] - box_length_i;
     }
   }
   return 0;
@@ -194,19 +250,26 @@ int Atoms::step_with_vel_verlet(float t_step_i, float box_length_i,
   char bc_type_i) {
 
   char force_type = 'l'; // LJ
-  float cutoff = 0.0;
+  float cutoff = 5.0;
 
-  ArrayXXf force_before = get_force(force_type, cutoff);
+  ArrayXXf force_before, force_after;
+
+  // Calculate force before
+  if (bc_type_i == 't')
+    force_before = get_force_box(force_type, cutoff, box_length_i);
+  else force_before = get_force(force_type, cutoff);
 
   // Update Positions
   ArrayXXf step_move(num_dims_, num_atoms_);
   step_move = vel_*t_step_i + 0.5*force_before*t_step_i*t_step_i;
   move(step_move);
-
+  // Apply boundary conditions
   apply_box_bc(box_length_i, bc_type_i);
 
   // Calculate Force After
-  ArrayXXf force_after = get_force(force_type, cutoff);
+  if (bc_type_i == 't')
+    force_after = get_force_box(force_type, cutoff, box_length_i);
+  else force_after = get_force(force_type, cutoff);
 
   // Update Velocities
   ArrayXXf step_accl(num_dims_, num_atoms_); // TODO: join these lines?
@@ -234,27 +297,30 @@ VectorXf Atoms::get_vector(int a_i, int b_i) const {
   return get_pos(b_i) - get_pos(a_i); 
 }
 
-// VectorXf Atoms::get_vector(int a_i, int b_i, char bc_type_i) const {
-//   VectorXf vec = get_pos(b_i) - get_pos(a_i);
-//   if (bc_type_i == 't')
-//     for (int d = 0; )
-//   else
-//     return vec; 
-// }
-
-ArrayXXf Atoms::get_vector(int idx_i) const {
-  ArrayXXf vec = ArrayXXf::Zero(num_dims_, num_atoms_);
-  for (int i = 0; i < num_atoms_; i++)
-    vec.col(i) = get_vector(idx_i, i);
+VectorXf Atoms::get_vector_box(int a_i, int b_i, float box_length_i) const {
+  VectorXf vec = get_vector(a_i, b_i);
+  for (int d = 0; d < num_dims_; d++) {
+    if (vec[d] > box_length_i/2)
+      vec[d] += - box_length_i;
+    else if (vec[d] < -box_length_i/2)
+      vec[d] += box_length_i;
+  }
   return vec;
 }
 
-// float Atoms::get_distance(int a_i, int b_i, char bc_type_i) const { 
-//   return get_vector(a_i, b_i, bc_type_i).norm();
+// ArrayXXf Atoms::get_vector(int idx_i) const {
+//   ArrayXXf vec = ArrayXXf::Zero(num_dims_, num_atoms_);
+//   for (int i = 0; i < num_atoms_; i++)
+//     vec.col(i) = get_vector(idx_i, i);
+//   return vec;
 // }
 
 float Atoms::get_distance(int a_i, int b_i) const { 
   return get_vector(a_i, b_i).norm();
+}
+
+float Atoms::get_distance_box(int a_i, int b_i, float box_length_i) const { 
+  return get_vector_box(a_i, b_i, box_length_i).norm();
 }
 
 // TODO: Doc.
@@ -265,30 +331,21 @@ VectorXf Atoms::get_force_lj(int a_i, int b_i, float cutoff_i) const {
   if (r != 0.0) {
     force_mag = force_lj(r, cutoff_i);
     force = get_vector(a_i, b_i)/r*force_mag;
-  }
+  }        
   return force;
 }
 
-// TODO: Doc. LJ force on a given atom. USE PAIR FUNCTION if keeping
-// VectorXf Atoms::get_force_lj(int idx_i, float cutoff_i) const {
-//   VectorXf force = VectorXf::Zero(num_dims_);
-//   ArrayXXf vec = get_vector(idx_i);
-//   // need a vector to take norm, can't just use column of 2d array.
-//   VectorXf vec_atom = VectorXf::Zero(num_dims_);
-//   float r, force_mag; // distance, force magnitude
-//   VectorXf dir; // direction, unit vector
-//   for (int i = 0; i < num_atoms_; i++) {
-//     // TODO: ignore when i = idx 
-//     vec_atom = vec.col(i);
-//     r = vec_atom.norm(); // use distance measure
-//     if (r != 0.0) {
-//       force_mag = force_lj(r, cutoff_i);
-//       dir = vec.col(i)/r;
-//       force += force_mag*dir;
-//     }
-//   }
-//   return force;
-// }
+VectorXf Atoms::get_force_lj_box(int a_i, int b_i, float cutoff_i, 
+                                 float box_length_i) const {
+  VectorXf force = get_vector_box(a_i, b_i, box_length_i);
+  float r, force_mag; // distance, force magnitude
+  r = force.norm();
+  if (r != 0.0) {
+    force_mag = force_lj(r, cutoff_i);
+    force *= force_mag/r;
+  }
+  return force;
+}
 
 // TODO: Doc
 ArrayXXf Atoms::get_force_lj(float cutoff_i) const {
@@ -304,6 +361,18 @@ ArrayXXf Atoms::get_force_lj(float cutoff_i) const {
   return force;
 }
 
+ArrayXXf Atoms::get_force_lj_box(float cutoff_i, float box_length_i) const {
+  ArrayXXf force = ArrayXXf::Zero(num_dims_, num_atoms_);
+  ArrayXf force_ab = ArrayXf::Zero(num_dims_);
+  for (int a = 0; a < num_atoms_; a++) {
+    for (int b = a+1; b < num_atoms_; b++) {
+      force_ab = get_force_lj_box(a, b, cutoff_i, box_length_i);
+      force.col(a) += force_ab;
+      force.col(b) -= force_ab;
+    }
+  }
+  return force;
+}
 
 // TODO: Doc. LJ force on all atoms. We're calculating each pair force twice here.
 // should make use of symmetry to half.
@@ -314,13 +383,19 @@ ArrayXXf Atoms::get_force_lj(float cutoff_i) const {
 //   return force;
 // }
 
-
-
 ArrayXXf Atoms::get_force(char force_type_i, float cutoff_i) const {
   ArrayXXf force = ArrayXXf::Zero(num_dims_, num_atoms_);
   if (force_type_i == 'l') // Lennard-Jones
     force = get_force_lj(cutoff_i);
   return force; 
+}
+
+ArrayXXf Atoms::get_force_box(char force_type_i, float cutoff_i, 
+                              float box_length_i) const {
+  ArrayXXf force = ArrayXXf::Zero(num_dims_, num_atoms_);
+  if (force_type_i == 'l') // Lennard-Jones
+    force = get_force_lj_box(cutoff_i, box_length_i);
+  return force;   
 }
 
 ArrayXXf Atoms::get_vel() const { return vel_; }
