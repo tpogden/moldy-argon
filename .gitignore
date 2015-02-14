@@ -1,3 +1,6 @@
 *.o
 *.json
 *.out
+moldy_argon
+/tests
+TODO.md

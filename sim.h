@@ -76,8 +76,8 @@ class Sim {
 
   // Runs the simulation by stepping from t=0.0 and saves the json format
   // object to the given filename at each step.
-  int run(int num_t_steps_i, float t_step_i, char bc_type_i, 
-    string & json_filename_i);
+  int run(int num_t_steps_i, float t_step_i, char bc_type_i, char force_type_i, 
+          float cutoff_i, string & json_filename_i);
 
 };
 
