@@ -127,7 +127,6 @@ int Atoms::set_pos_lattice(float box_length_i) {
   ArrayXXf pos = ArrayXXf::Zero(num_dims_, num_atoms_);
 
   for (int i = 0; i < num_atoms_; i++) {
-    cout << i << endl;
     if (num_dims_ == 2) {
       pos(0, i) = i/num_spaces;
       pos(1, i) = i%num_spaces;
@@ -247,17 +246,17 @@ int Atoms::accl(VectorXf &accl_i, int idx_i) {
 
 // Same as above but with boundary conditions
 int Atoms::step_with_vel_verlet(float t_step_i, float box_length_i, 
-  char bc_type_i) {
+  char bc_type_i, char force_type_i, float cutoff_i) {
 
-  char force_type = 'l'; // LJ
-  float cutoff = 5.0;
+  // char force_type = 'n'; // LJ
+  // float cutoff = 5.0;
 
   ArrayXXf force_before, force_after;
 
   // Calculate force before
   if (bc_type_i == 't')
-    force_before = get_force_box(force_type, cutoff, box_length_i);
-  else force_before = get_force(force_type, cutoff);
+    force_before = get_force_box(force_type_i, cutoff_i, box_length_i);
+  else force_before = get_force(force_type_i, cutoff_i);
 
   // Update Positions
   ArrayXXf step_move(num_dims_, num_atoms_);
@@ -268,8 +267,8 @@ int Atoms::step_with_vel_verlet(float t_step_i, float box_length_i,
 
   // Calculate Force After
   if (bc_type_i == 't')
-    force_after = get_force_box(force_type, cutoff, box_length_i);
-  else force_after = get_force(force_type, cutoff);
+    force_after = get_force_box(force_type_i, cutoff_i, box_length_i);
+  else force_after = get_force(force_type_i, cutoff_i);
 
   // Update Velocities
   ArrayXXf step_accl(num_dims_, num_atoms_); // TODO: join these lines?
@@ -307,13 +306,6 @@ VectorXf Atoms::get_vector_box(int a_i, int b_i, float box_length_i) const {
   }
   return vec;
 }
-
-// ArrayXXf Atoms::get_vector(int idx_i) const {
-//   ArrayXXf vec = ArrayXXf::Zero(num_dims_, num_atoms_);
-//   for (int i = 0; i < num_atoms_; i++)
-//     vec.col(i) = get_vector(idx_i, i);
-//   return vec;
-// }
 
 float Atoms::get_distance(int a_i, int b_i) const { 
   return get_vector(a_i, b_i).norm();
@@ -373,15 +365,6 @@ ArrayXXf Atoms::get_force_lj_box(float cutoff_i, float box_length_i) const {
   }
   return force;
 }
-
-// TODO: Doc. LJ force on all atoms. We're calculating each pair force twice here.
-// should make use of symmetry to half.
-// ArrayXXf Atoms::get_force_lj(float cutoff_i) const {
-//   ArrayXXf force = ArrayXXf::Zero(num_dims_, num_atoms_);
-//   for (int i = 0; i < num_atoms_; i++)
-//     force.col(i) = get_force_lj(i, cutoff_i);
-//   return force;
-// }
 
 ArrayXXf Atoms::get_force(char force_type_i, float cutoff_i) const {
   ArrayXXf force = ArrayXXf::Zero(num_dims_, num_atoms_);

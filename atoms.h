@@ -102,8 +102,9 @@ class Atoms {
   // Integrate Newton's equations of motion for the atoms using the 'Velocity
   // Verlet' algorithm, given a time step.
   // http://en.wikipedia.org/wiki/Verlet_integration#Velocity_Verlet
-  int step_with_vel_verlet(float t_step_i);
-  int step_with_vel_verlet(float t_step_i, float box_length_i, char bc_type_i);
+  // int step_with_vel_verlet(float t_step_i);
+  int step_with_vel_verlet(float t_step_i, float box_length_i, char bc_type_i,
+                           char force_type_i, float cutoff_i);
   
   // Gets _____________________________________________________________________
 

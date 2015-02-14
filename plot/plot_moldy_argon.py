@@ -31,7 +31,7 @@ def main():
         pos[i] = data[i]['atoms']['pos']
         t_range[i] = data[i]['t']
 
-    box_length = 10.
+    box_length = 4.
 
     # Set up the figure, axis and plot to animate
     fig = plt.figure(figsize=(8.,8.))
